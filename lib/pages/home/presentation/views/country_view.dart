@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -12,8 +13,7 @@ class CountryView extends StatefulWidget {
 }
 
 class _CountryViewState extends State<CountryView> {
-  File _image;
-  File _imageToUndo;
+  File _image, _imageToUndo;
 
   final picker = ImagePicker();
 
@@ -29,8 +29,7 @@ class _CountryViewState extends State<CountryView> {
       Permission.storage,
     ].request();
 
-    final info = statuses[Permission.storage].toString();
-    print(info);
+    statuses[Permission.storage].toString();
   }
 
   Future _openCamera() async {
@@ -64,7 +63,7 @@ class _CountryViewState extends State<CountryView> {
           CropAspectRatioPreset.ratio16x9
         ],
         androidUiSettings: AndroidUiSettings(
-            toolbarTitle: 'Cropper',
+            toolbarTitle: 'Chỉnh sửa',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
@@ -83,7 +82,11 @@ class _CountryViewState extends State<CountryView> {
   }
 
   Future _saveImage() async {
-    final result = await ImageGallerySaver.saveFile(_image.path);
+    await ImageGallerySaver.saveFile(_image.path);
+    Fluttertoast.showToast(
+        msg: "Đã lưu",
+        backgroundColor: Theme.of(context).primaryColor,
+        gravity: ToastGravity.BOTTOM);
   }
 
   void _settingModalButtonSheet(BuildContext context) {
@@ -95,12 +98,12 @@ class _CountryViewState extends State<CountryView> {
                 children: <Widget>[
                   ListTile(
                     leading: const Icon(Icons.camera),
-                    title: const Text('Camera'),
+                    title: const Text('Máy ảnh'),
                     onTap: _openCamera,
                   ),
                   ListTile(
                     leading: const Icon(Icons.photo_album),
-                    title: const Text('Gallery'),
+                    title: const Text('Thư viện'),
                     onTap: _openGallery,
                   ),
                 ],
@@ -112,7 +115,7 @@ class _CountryViewState extends State<CountryView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Image Scan App'),
+          title: const Text('Chỉnh sửa ảnh'),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -120,7 +123,7 @@ class _CountryViewState extends State<CountryView> {
             Expanded(
               child: Center(
                 child: _image == null
-                    ? Text('No image selected.')
+                    ? Text('Không có hình ảnh nào được chọn.')
                     : Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 20.0, horizontal: 10.0),
@@ -137,7 +140,7 @@ class _CountryViewState extends State<CountryView> {
                         Visibility(
                           child: FloatingActionButton(
                             child: Icon(Icons.crop),
-                            tooltip: 'Crop Image',
+                            tooltip: 'Chỉnh sửa ảnh',
                             onPressed: () {
                               _cropImage();
                             },
@@ -147,7 +150,7 @@ class _CountryViewState extends State<CountryView> {
                         Visibility(
                           child: FloatingActionButton(
                             child: Icon(Icons.undo),
-                            tooltip: 'Undo Image',
+                            tooltip: 'Hoàn tác',
                             onPressed: () {
                               _undoImage();
                             },
@@ -157,7 +160,7 @@ class _CountryViewState extends State<CountryView> {
                         Visibility(
                           child: FloatingActionButton(
                             child: Icon(Icons.save_alt),
-                            tooltip: 'Save Image',
+                            tooltip: 'Lưu ảnh',
                             onPressed: () {
                               _saveImage();
                             },
@@ -166,7 +169,7 @@ class _CountryViewState extends State<CountryView> {
                         ),
                         FloatingActionButton(
                           child: Icon(Icons.add),
-                          tooltip: 'Add Image',
+                          tooltip: 'Thêm ảnh',
                           onPressed: () {
                             _settingModalButtonSheet(context);
                           },
