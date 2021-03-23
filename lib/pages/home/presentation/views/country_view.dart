@@ -25,11 +25,9 @@ class _CountryViewState extends State<CountryView> {
   }
 
   _requestPermission() async {
-    var statuses = await [
+    await [
       Permission.storage,
     ].request();
-
-    statuses[Permission.storage].toString();
   }
 
   Future _openCamera() async {
@@ -82,11 +80,13 @@ class _CountryViewState extends State<CountryView> {
   }
 
   Future _saveImage() async {
-    await ImageGallerySaver.saveFile(_image.path);
-    Fluttertoast.showToast(
-        msg: "Đã lưu",
-        backgroundColor: Theme.of(context).primaryColor,
-        gravity: ToastGravity.BOTTOM);
+    final result = await ImageGallerySaver.saveFile(_image.path);
+    if (result.toString().isNotEmpty) {
+      Fluttertoast.showToast(
+          msg: "Đã lưu",
+          backgroundColor: Theme.of(context).primaryColor,
+          gravity: ToastGravity.BOTTOM);
+    }
   }
 
   void _settingModalButtonSheet(BuildContext context) {
